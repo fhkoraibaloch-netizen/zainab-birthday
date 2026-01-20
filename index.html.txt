@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zainab's VIP Surprise</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400&display=swap');
+
+        body {
+            margin: 0;
+            /* Peach & Cream Gradient based on your image */
+            background: linear-gradient(135deg, #fce4ec 0%, #ffe0b2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Countdown */
+        #countdown-screen { text-align: center; z-index: 10; }
+        .timer { font-size: 6rem; font-family: 'Playfair Display', serif; color: #d4af37; }
+
+        /* VIP Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            border: 1px solid #fff;
+            padding: 40px;
+            border-radius: 25px;
+            width: 90%; max-width: 500px;
+            text-align: center;
+            display: none;
+            box-shadow: 0 15px 35px rgba(255, 138, 101, 0.15);
+        }
+
+        h2 { font-family: 'Playfair Display', serif; color: #b71c1c; }
+
+        .option-btn {
+            background: #fff;
+            color: #d4a373;
+            border: 1px solid #fae1dd;
+            padding: 12px; margin: 8px 0;
+            border-radius: 10px;
+            cursor: pointer; width: 100%;
+            transition: 0.3s;
+        }
+        .option-btn:hover { background: #fae1dd; transform: translateY(-2px); }
+
+        /* Balloons */
+        .balloon-container { display: none; gap: 8px; position: absolute; top: 10%; justify-content: center; width: 100%; }
+        .balloon {
+            width: 40px; height: 55px;
+            background: linear-gradient(135deg, #f9dcc4, #d4af37);
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: #fff;
+            animation: rise 3s forwards ease-out;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes rise { from { transform: translateY(110vh); } to { transform: translateY(0); } }
+
+        .final-msg { line-height: 1.8; color: #5d4037; font-size: 1.1rem; margin-top: 20px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div id="countdown-screen">
+    <p style="letter-spacing: 5px; color: #b78a62;">ACCESSING SURPRISE</p>
+    <div class="timer" id="timer">05</div>
+</div>
+
+<div class="glass-card" id="quiz-box">
+    <h2 id="question"></h2>
+    <div id="options-list"></div>
+    <p id="feedback" style="margin-top: 15px; color: #8d6e63; font-style: italic;"></p>
+</div>
+
+<div class="balloon-container" id="balloons"></div>
+<div class="glass-card" id="final-box">
+    <h1 style="font-family: 'Playfair Display', serif; color: #d4af37; font-size: 2.5rem; margin: 0;">100% Forever</h1>
+    <p style="letter-spacing: 4px; color: #b78a62; font-weight: 600;">ZAINAB + FAIZA</p>
+    <div id="typed-text" class="final-msg"></div>
+</div>
+
+<script>
+        // Countdown
+        let timeLeft = 5;
+        const countdown = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer').innerText = '0' + timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                document.getElementById('countdown-screen').style.display = 'none';
+                document.getElementById('quiz-box').style.display = 'block';
+                showQuestion();
+            }
+        }, 1000);
+
+        // Quiz Data
+        const quizData = [
+            { q: "What matters most in a real friendship?", opt: ["Talking every hour", "Respecting boundaries", "Expensive gifts"], correct: 1, hit: "Respect is the foundation of our bond." },
+            { q: "If your friend is silent, what would you do?", opt: ["Judge them", "Give space and stay kind", "Get angry"], correct: 1, hit: "Patience protects what we have." },
+            { q: "For you, friendship means:", opt: ["Comfort in silence", "Only fun times", "Control"], correct: 0, hit: "Our silence is more powerful than words." }
+        ];
+
+        let currentQ = 0;
+        function showQuestion() {
+            const data = quizData[currentQ];
+            document.getElementById("question").innerText = data.q;
+            const list = document.getElementById("options-list");
+            list.innerHTML = "";
+            data.opt.forEach((text, i) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerText = text;
+                btn.onclick = () => {
+                    document.getElementById("feedback").innerText = (i === data.correct) ? data.hit : "True friendship values respect.";
+                    setTimeout(() => {
+                        currentQ++;
+                        document.getElementById("feedback").innerText = "";
+                        if (currentQ < quizData.length) showQuestion();
+                        else revealFinal();
+                    }, 2000);
+                };
+                list.appendChild(btn);
+            });
+        }
+
+        function revealFinal() {
+            document.getElementById("quiz-box").style.display = "none";
+            const bCont = document.getElementById("balloons");
+            bCont.style.display = "flex";
+
+            // Single "HAPPY BIRTHDAY" balloon set
+            "HAPPY BIRTHDAY".split('').forEach((char, i) => {
+                if(char === ' ') return;
+                const b = document.createElement('div');
+                b.className = 'balloon';
+                b.innerText = char;
+                b.style.setProperty('--delay', (i * 0.15) + 's');
+                bCont.appendChild(b);
+            });
+
+            setTimeout(() => {
+                document.getElementById("final-box").style.display = "block";
+                typeMessage();
+            }, 3500);
+        }
+
+        function typeMessage() {
+            const msg = "Dear Zainab,\nMay your birthday mark the beginning of another year of growth, wisdom, and endless possibilities. Wishing you success and serenity always.\n\nHappy Birthday! ???";
+            let k = 0;
+            const target = document.getElementById("typed-text");
+            function type() {
+                if (k < msg.length) {
+                    target.innerHTML += msg.charAt(k) === '\n' ? '<br>' : msg.charAt(k);
+                    k++;
+                    setTimeout(type, 45);
+                }
+            }
+            type();
+        }
+    </script>
+</body>
+</html>
